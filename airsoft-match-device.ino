@@ -8,8 +8,8 @@ TMRpcm speaker;
 
 int matchFlag = 0;
 
-int team1Timer = 0;
-int team2Timer = 0;
+long team1Timer = 0;
+long team2Timer = 0;
 
 int resetPin = 3;
 int team1Pin = 5;
@@ -23,7 +23,7 @@ bool endGameFlag = true;
 String winnerTeam = "";
 
 // 15 min = +-150000
-const int endGameTime = 2000;
+const long endGameTime = 150000;
 
 void setup() {
   pinMode(resetPin, INPUT_PULLUP);
