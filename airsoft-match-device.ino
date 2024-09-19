@@ -1,19 +1,21 @@
-#include <SD.h>
-#include <TMRpcm.h>
+#include "DFRobotDFPlayerMini.h"
+#include "SoftwareSerial.h"
 
-const int sdCardPort = 10;
-const int speakerPort = 9;
+const int speakerRx = 10;
+const int speakerTx = 11;
+const int speakerVolume = 10;
 
-TMRpcm speaker;
+SoftwareSerial speakerSerial(speakerRx, speakerTx);
+DFRobotDFPlayerMini speaker;
+
+const int resetPin = 3;
+const int team1Pin = 5;
+const int team2Pin = 6;
 
 int matchFlag = 0;
 
 long team1Timer = 0;
 long team2Timer = 0;
-
-int resetPin = 3;
-int team1Pin = 5;
-int team2Pin = 6;
 
 bool tenMinFlag = true;
 bool fiveMinFlag = true;
@@ -29,15 +31,16 @@ void setup() {
   pinMode(resetPin, INPUT_PULLUP);
   pinMode(team1Pin, INPUT_PULLUP);
   pinMode(team2Pin, INPUT_PULLUP);
-  Serial.begin(9600);
 
-  if (!SD.begin(sdCardPort)) {
-    Serial.println("SD card error");
-    while(true);
+  Serial.begin(9600);
+  speakerSerial.begin(9600);
+
+  if (!speaker.begin(speakerSerial)) {
+    Serial.println("Speaker setup failed!");
+    while (true) ;
   }
 
-  speaker.speakerPin = speakerPort;
-  speaker.setVolume(2);
+  speaker.volume(speakerVolume);
 }
 
 void loop() {
@@ -61,12 +64,14 @@ void loop() {
 
   if (button1 == LOW) {
     matchFlag = team1Pin;
-    speaker.play("capturaAzul.wav");
+    speaker.playFolder(1, 5);
+    delay(2100);
   }
 
   if (button2 == LOW) {
     matchFlag = team2Pin;
-    speaker.play("capturaAmarelo.wav");
+    speaker.playFolder(1, 4);
+    delay(2100);
   }
 
   if (matchFlag == 0) Serial.println("Waiting for teams to get flag");
@@ -82,29 +87,29 @@ void loop() {
   }
 
   if (team1Timer >= 50000 && tenMinFlag || team2Timer >= 50000 && tenMinFlag) {
-    speaker.play("10min.wav");
+    speaker.playFolder(1, 3);
     tenMinFlag = false;
   }
 
   if (team1Timer >= 100000 && fiveMinFlag || team2Timer >= 100000 && fiveMinFlag) {
-    speaker.play("5min.wav");
+    speaker.playFolder(1, 2);
     fiveMinFlag = false;
   }
 
   if (team1Timer >= 130000 && twoMinFlag || team2Timer >= 130000 && twoMinFlag) {
-    speaker.play("2min.wav");
+    speaker.playFolder(1, 1);
     twoMinFlag = false;
   }
 
   if (team1Timer >= endGameTime && endGameFlag) {
-    speaker.play("endGameAzul.wav");
+    speaker.playFolder(1, 7);
     Serial.println("TEAM 1 WIN");
     winnerTeam = "Team 1";
     endGameFlag = false;
   }
 
   if (team2Timer >= endGameTime && endGameFlag) {
-    speaker.play("endGameAmarelo.wav");
+    speaker.playFolder(1, 6);
     Serial.println("TEAM 2 WIN");
     winnerTeam = "Team 2";
     endGameFlag = false;
