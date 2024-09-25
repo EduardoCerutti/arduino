@@ -3,7 +3,7 @@
 
 const int speakerRx = 10;
 const int speakerTx = 11;
-const int speakerVolume = 10;
+const int speakerVolume = 30;
 
 SoftwareSerial speakerSerial(speakerRx, speakerTx);
 DFRobotDFPlayerMini speaker;
@@ -41,6 +41,7 @@ void setup() {
   }
 
   speaker.volume(speakerVolume);
+  speaker.playFolder(1, 8);
 }
 
 void loop() {
@@ -60,6 +61,7 @@ void loop() {
     endGameFlag = true;
 
     String winnerTeam = "";
+    speaker.playFolder(1, 8);
   }
 
   if (button1 == LOW) {
