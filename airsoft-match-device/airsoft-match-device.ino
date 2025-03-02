@@ -8,7 +8,6 @@ const int speakerVolume = 30;
 SoftwareSerial speakerSerial(speakerRx, speakerTx);
 DFRobotDFPlayerMini speaker;
 
-const int resetPin = 3;
 //white
 const int team1Pin = 5;
 //yellow
@@ -34,7 +33,6 @@ int soundTime = 2000;
 unsigned long previousMs = 0;
 
 void setup() {
-  pinMode(resetPin, INPUT_PULLUP);
   pinMode(team1Pin, INPUT_PULLUP);
   pinMode(team2Pin, INPUT_PULLUP);
 
@@ -54,13 +52,8 @@ void setup() {
 void loop() {
   unsigned long currentMs = millis();
 
-  int resetButton = digitalRead(resetPin);
   int button1 = digitalRead(team1Pin);
   int button2 = digitalRead(team2Pin);
-
-  if (resetButton == LOW) {
-    resetGame();
-  }
 
   checkButtons(button1, button2);
 
@@ -72,29 +65,11 @@ void loop() {
     checkWinner();
 
     playWarnings();
-  
+
     playSounds(currentMs);
 
     checkSoundTiming();
   }
-}
-
-void resetGame() {
-  matchFlag = 0;
-
-  team1Timer = 0;
-  team2Timer = 0;
-
-  T1FiveMinFlag = true;
-  T2FiveMinFlag = true;
-  T1TwoMinFlag = true;
-  T2TwoMinFlag = true;
-  endGameFlag = true;
-  soundTime = 2000;
-
-  String winnerTeam = "";
-  speaker.playFolder(1, 8);
-  delay(2600);
 }
 
 void checkButtons(int button1, int button2) {
