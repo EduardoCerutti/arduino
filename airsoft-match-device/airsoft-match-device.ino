@@ -8,9 +8,9 @@ const int speakerVolume = 30;
 SoftwareSerial speakerSerial(speakerRx, speakerTx);
 DFRobotDFPlayerMini speaker;
 
-//white
+//white - CT
 const int team1Pin = 5;
-//yellow
+//yellow - TR
 const int team2Pin = 6;
 
 int matchFlag = 0;
@@ -28,7 +28,8 @@ String winnerTeam = "";
 
 const long endGameTime = 50000;
 
-int soundTime = 2000;
+int soundTimeT1 = 2000;
+int soundTimeT2 = 2000;
 
 unsigned long previousMs = 0;
 
@@ -106,7 +107,7 @@ void playWarnings() {
   }
 
   if (team2Timer >= 9000 && T2FiveMinFlag) {
-    speaker.playFolder(1, 2);
+    speaker.playFolder(1, 13);
     T2FiveMinFlag = false;
     delay(2600);
   }
@@ -118,7 +119,7 @@ void playWarnings() {
   }
 
   if (team2Timer >= 34000 && T2TwoMinFlag) {
-    speaker.playFolder(1, 1);
+    speaker.playFolder(1, 12);
     T2TwoMinFlag = false;
     delay(3800);
   }
@@ -141,20 +142,27 @@ void checkWinner() {
 }
 
 void playSounds(unsigned long currentMs) {
-  bool playSound = currentMs - previousMs >= soundTime;
+  bool playSoundT1 = currentMs - previousMs >= soundTimeT1;
+  bool playSoundT2 = currentMs - previousMs >= soundTimeT2;
 
-  if(matchFlag != 0 && playSound) {
-    speaker.playFolder(1, 10);
+  if(matchFlag != 0) {
+
+    if (matchFlag == team1Pin && playSoundT1) speaker.playFolder(1, 11);
+
+    if (matchFlag == team2Pin && playSoundT2) speaker.playFolder(1, 10);
+
     previousMs = currentMs;
   }
 
-  if(matchFlag == 0 && playSound) {
+  if(matchFlag == 0 && (playSoundT1 || playSoundT2)) {
     speaker.playFolder(1, 9);
     previousMs = currentMs;
   }
 }
 
 void checkSoundTiming() {
-  if (team1Timer >= 9000 || team2Timer >= 9000) soundTime = 1000;
-  if (team1Timer >= 34000 || team2Timer >= 34000) soundTime = 500;
+  if (team1Timer >= 9000) soundTimeT1 = 1000;
+  if (team2Timer >= 9000) soundTimeT2 = 1000;
+  if (team1Timer >= 34000) soundTimeT1 = 500;
+  if (team2Timer >= 34000) soundTimeT2 = 500;
 }
