@@ -145,12 +145,13 @@ void playSounds(unsigned long currentMs) {
   bool playSoundT1 = currentMs - previousMs >= soundTimeT1;
   bool playSoundT2 = currentMs - previousMs >= soundTimeT2;
 
-  if(matchFlag != 0) {
+  if(matchFlag == team1Pin && playSoundT1) {
+    speaker.playFolder(1, 11);
+    previousMs = currentMs;
+  }
 
-    if (matchFlag == team1Pin && playSoundT1) speaker.playFolder(1, 11);
-
-    if (matchFlag == team2Pin && playSoundT2) speaker.playFolder(1, 10);
-
+  if(matchFlag == team2Pin && playSoundT2) {
+    speaker.playFolder(1, 10);
     previousMs = currentMs;
   }
 
